@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+،<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
@@ -1261,30 +1261,47 @@ document.getElementById(
 
 async function normalClick(){
 
-if(mining){
+    if(mining){
+        showToast("⛏️ الجمع يعمل حاليًا");
+        return;
+    }
 
-showToast(
-"⛏️ الجمع يعمل حاليًا"
-);
+    const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
 
-return;
+    if(!tgUser){
+        showToast("⚠️ افتح NTF من Telegram");
+        return;
+    }
+
+    try {
+        const response = await fetch("/api/mining/click", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: tgUser.id
+            })
+        });
+
+        const user = await response.json();
+
+        if(!response.ok){
+            showToast("⚠️ لا توجد طاقة");
+            return;
+        }
+
+        balance = user.balance;
+        energy = user.energy;
+
+        showToast("+1 NTF");
+        updateUI();
+
+    } catch(error) {
+        console.error(error);
+        showToast("❌ خطأ في الاتصال");
+    }
 }
-
-showToast(
-"+0.0000001 NTF"
-);
-
-balance += 0.0000001;
-
-if(energy > 0){
-energy--;
-}
-
-updateUI();
-loadUser();
-
-}
-
 /* LONG PRESS */
 
 const circle =
