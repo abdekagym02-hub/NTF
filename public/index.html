@@ -1101,6 +1101,26 @@ let maxEnergy = 100;
 let miningRate = 0.0000012;
 let mining = false;
 
+async function loadUser() {
+    try {
+        const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+        if (!tgUser) return;
+
+        const response = await fetch(`/api/user?id=${tgUser.id}`);
+        const user = await response.json();
+
+        balance = user.balance;
+        friends = user.friends;
+        level = user.level;
+        energy = user.energy;
+        maxEnergy = user.energy;
+
+        updateUI();
+    } catch (error) {
+        console.error("User API error:", error);
+    }
+}
 let longPressTimer = null;
 let longPressTriggered = false;
 
