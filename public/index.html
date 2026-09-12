@@ -1,21 +1,1551 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
 <title>NTF</title>
+
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#08090d;
+color:#fff;
+min-height:100vh;
+}
+
+.app{
+max-width:500px;
+margin:auto;
+padding:18px;
+padding-bottom:100px;
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.logo{
+font-size:23px;
+font-weight:bold;
+color:#e0b34f;
+}
+
+.user-box{
+display:flex;
+align-items:center;
+gap:9px;
+}
+
+.avatar{
+width:42px;
+height:42px;
+border-radius:50%;
+background:#1b1c23;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:20px;
+}
+
+.user-name{
+font-size:14px;
+color:#ddd;
+}
+
+.balance-card{
+background:linear-gradient(145deg,#17130b,#0f1015);
+border:1px solid #4d3b18;
+border-radius:22px;
+padding:20px;
+text-align:center;
+margin-bottom:15px;
+}
+
+.balance-label{
+color:#999;
+font-size:13px;
+}
+
+.balance{
+font-size:34px;
+font-weight:bold;
+color:#e2b44e;
+margin-top:8px;
+word-break:break-all;
+}
+
+.currency{
+color:#777;
+font-size:13px;
+margin-top:3px;
+}
+
+.mining-card{
+background:#111218;
+border:1px solid #20212a;
+border-radius:25px;
+padding:22px 15px;
+text-align:center;
+margin-bottom:15px;
+}
+
+.mining-title{
+font-size:19px;
+margin-bottom:5px;
+}
+
+.mining-subtitle{
+color:#888;
+font-size:13px;
+margin-bottom:20px;
+}
+
+.mining-circle{
+width:210px;
+height:210px;
+margin:auto;
+border-radius:50%;
+
+background:conic-gradient(
+#e0b34f 0deg,
+#e0b34f 45deg,
+#28231a 45deg,
+#28231a 360deg
+);
+
+padding:8px;
+cursor:pointer;
+
+box-shadow:
+0 0 30px rgba(224,179,79,.15);
+
+transition:.15s;
+user-select:none;
+-webkit-user-select:none;
+touch-action:none;
+}
+
+.mining-circle:active{
+transform:scale(.96);
+}
+
+.circle-inner{
+width:100%;
+height:100%;
+border-radius:50%;
+background:#0b0c11;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+.eye{
+font-size:65px;
+}
+
+.tap-text{
+color:#ddd;
+font-size:14px;
+margin-top:5px;
+}
+
+.auto-text{
+color:#d6a84f;
+font-size:11px;
+margin-top:6px;
+}
+
+.rate{
+margin-top:15px;
+color:#d5aa4b;
+font-size:13px;
+}
+
+.energy{
+margin-top:8px;
+color:#aaa;
+font-size:13px;
+}
+
+.energy-bar{
+height:8px;
+background:#24252d;
+border-radius:20px;
+margin:12px 10px 0;
+overflow:hidden;
+}
+
+.energy-fill{
+height:100%;
+width:100%;
+background:#d6a84f;
+border-radius:20px;
+transition:.3s;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px;
+margin-bottom:20px;
+}
+
+.stat{
+background:#111218;
+border:1px solid #20212a;
+border-radius:15px;
+padding:14px 5px;
+text-align:center;
+}
+
+.stat-icon{
+font-size:21px;
+}
+
+.stat-number{
+margin-top:5px;
+font-weight:bold;
+}
+
+.stat-name{
+color:#777;
+font-size:11px;
+margin-top:3px;
+}
+
+.section-title{
+font-size:18px;
+margin-bottom:12px;
+margin-top:22px;
+}
+
+.earn-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.earn-card{
+background:#111218;
+border:1px solid #20212a;
+border-radius:17px;
+padding:17px;
+cursor:pointer;
+}
+
+.earn-card:active{
+transform:scale(.98);
+}
+
+.earn-icon{
+font-size:28px;
+margin-bottom:8px;
+}
+
+.earn-title{
+font-weight:bold;
+margin-bottom:5px;
+}
+
+.earn-description{
+color:#777;
+font-size:11px;
+line-height:1.5;
+}
+
+.reward{
+display:inline-block;
+margin-top:9px;
+color:#dcb052;
+font-size:12px;
+}
+
+.task-list{
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.task{
+background:#111218;
+border:1px solid #24252d;
+border-radius:16px;
+padding:14px;
+
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.task-icon{
+width:45px;
+height:45px;
+border-radius:13px;
+background:#1b1c23;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:23px;
+flex-shrink:0;
+}
+
+.task-info{
+flex:1;
+}
+
+.task-title{
+font-weight:bold;
+font-size:14px;
+}
+
+.task-reward{
+color:#d6a84f;
+font-size:11px;
+margin-top:4px;
+}
+
+.task-btn{
+border:0;
+border-radius:10px;
+padding:9px 13px;
+font-weight:bold;
+background:#d6a84f;
+color:#111;
+cursor:pointer;
+}
+
+.task-btn.claim{
+background:#39b86f;
+color:#fff;
+}
+
+.task-btn:disabled{
+opacity:.6;
+}
+
+.friend-box{
+background:#111218;
+border:1px solid #292a31;
+border-radius:18px;
+padding:18px;
+}
+
+.friend-title{
+font-size:16px;
+font-weight:bold;
+}
+
+.friend-description{
+color:#888;
+font-size:12px;
+line-height:1.6;
+margin-top:7px;
+}
+
+.referral{
+display:flex;
+margin-top:15px;
+gap:7px;
+}
+
+.referral input{
+flex:1;
+background:#08090d;
+border:1px solid #292a31;
+border-radius:10px;
+color:#aaa;
+padding:10px;
+font-size:11px;
+direction:ltr;
+}
+
+.copy-btn{
+border:0;
+background:#d6a84f;
+color:#111;
+border-radius:10px;
+padding:10px 12px;
+font-weight:bold;
+}
+
+.packages{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.package{
+background:#111218;
+border:1px solid #292a31;
+border-radius:18px;
+padding:17px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.package.popular{
+border-color:#d6a84f;
+box-shadow:0 0 18px rgba(214,168,79,.08);
+}
+
+.package-left{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.package-icon{
+font-size:27px;
+}
+
+.package-name{
+font-weight:bold;
+font-size:15px;
+}
+
+.package-rate{
+color:#d6a84f;
+font-size:12px;
+margin-top:5px;
+}
+
+.package-energy{
+color:#777;
+font-size:11px;
+margin-top:4px;
+}
+
+.package-right{
+text-align:center;
+}
+
+.price{
+font-size:18px;
+font-weight:bold;
+margin-bottom:7px;
+}
+
+.buy-btn{
+border:0;
+background:#d6a84f;
+color:#111;
+padding:9px 13px;
+border-radius:10px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.bottom-nav{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+height:72px;
+background:#101116;
+border-top:1px solid #24252d;
+display:flex;
+justify-content:space-around;
+align-items:center;
+z-index:10;
+}
+
+.nav{
+border:0;
+background:transparent;
+color:#777;
+font-size:10px;
+cursor:pointer;
+}
+
+.nav-icon{
+font-size:21px;
+display:block;
+margin-bottom:3px;
+}
+
+.nav.active{
+color:#e0b34f;
+}
+
+.toast{
+position:fixed;
+left:50%;
+bottom:88px;
+transform:translateX(-50%);
+background:#24252d;
+color:white;
+padding:12px 18px;
+border-radius:12px;
+font-size:13px;
+display:none;
+z-index:50;
+white-space:nowrap;
+}
+
+.mining-active{
+box-shadow:0 0 45px rgba(224,179,79,.35);
+}
+
+.mining-active .eye{
+animation:eyePulse .8s infinite alternate;
+}
+
+@keyframes eyePulse{
+from{transform:scale(1);}
+to{transform:scale(1.12);}
+}
+
+</style>
+
 </head>
 
-<body style="background:#08090d;color:white;font-family:Arial;text-align:center;padding:50px">
+<body>
 
-<h1>🤖 NTF</h1>
-<p>مرحبًا بك في NTF</p>
-<p>Mini App يعمل بنجاح ✅</p>
+<div class="app">
+
+<div class="header">
+
+<div class="logo">
+🤖 NTF
+</div>
+
+<div class="user-box">
+
+<div id="userName" class="user-name">
+مستخدم
+</div>
+
+<div class="avatar">
+👤
+</div>
+
+</div>
+
+</div>
+
+
+<div class="balance-card">
+
+<div class="balance-label">
+رصيدك الحالي
+</div>
+
+<div id="balance" class="balance">
+0.0000000000
+</div>
+
+<div class="currency">
+NTF Points
+</div>
+
+</div>
+
+
+<div class="mining-card">
+
+<div class="mining-title">
+⛏️ جمع النقاط
+</div>
+
+<div class="mining-subtitle">
+ضغطة = 0.0000001 • الضغط المطول = تشغيل / إيقاف
+</div>
+
+<div id="miningCircle" class="mining-circle">
+
+<div class="circle-inner">
+
+<div class="eye">
+🤖
+</div>
+
+<div id="tapText" class="tap-text">
+اضغط هنا
+</div>
+
+<div id="autoText" class="auto-text">
+الجمع متوقف
+</div>
+
+</div>
+
+</div>
+
+<div id="rate" class="rate">
++0.0000012000 NTF / ثانية
+</div>
+
+<div id="energy" class="energy">
+⚡ الطاقة: 100
+</div>
+
+<div class="energy-bar">
+
+<div id="energyFill" class="energy-fill">
+</div>
+
+</div>
+
+</div>
+
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-icon">👥</div>
+<div id="friends" class="stat-number">0</div>
+<div class="stat-name">الأصدقاء</div>
+</div>
+
+<div class="stat">
+<div class="stat-icon">⭐</div>
+<div id="level" class="stat-number">1</div>
+<div class="stat-name">المستوى</div>
+</div>
+
+<div class="stat">
+<div class="stat-icon">⚡</div>
+<div id="energyStat" class="stat-number">100</div>
+<div class="stat-name">الطاقة</div>
+</div>
+
+</div>
+
+
+<div class="section-title">
+💰 طرق كسب النقاط
+</div>
+
+<div class="earn-grid">
+
+<div class="earn-card"
+onclick="showSection('friendsSection')">
+
+<div class="earn-icon">👥</div>
+
+<div class="earn-title">
+دعوة الأصدقاء
+</div>
+
+<div class="earn-description">
+ادعُ أصدقاءك واحصل على نقاط.
+</div>
+
+<div class="reward">
++ نقاط
+</div>
+
+</div>
+
+<div class="earn-card"
+onclick="showSection('videosSection')">
+
+<div class="earn-icon">🎬</div>
+
+<div class="earn-title">
+الفيديوهات
+</div>
+
+<div class="earn-description">
+شاهد الفيديوهات ونفذ المهام.
+</div>
+
+<div class="reward">
++ نقاط
+</div>
+
+</div>
+
+<div class="earn-card"
+onclick="showSection('adsSection')">
+
+<div class="earn-icon">📢</div>
+
+<div class="earn-title">
+المهام
+</div>
+
+<div class="earn-description">
+نفذ المهام واحصل على نقاط.
+</div>
+
+<div class="reward">
++ نقاط
+</div>
+
+</div>
+
+<div class="earn-card"
+onclick="dailyTask()">
+
+<div class="earn-icon">🎁</div>
+
+<div class="earn-title">
+المهمة اليومية
+</div>
+
+<div class="earn-description">
+مهمة يومية جديدة للحصول على نقاط.
+</div>
+
+<div class="reward">
++ نقاط
+</div>
+
+</div>
+
+</div>
+
+
+<div id="friendsSection">
+
+<div class="section-title">
+👥 الأصدقاء والإحالات
+</div>
+
+<div class="friend-box">
+
+<div class="friend-title">
+دعوة أصدقائك
+</div>
+
+<div class="friend-description">
+شارك رابطك الخاص واحصل على مكافآت عند انضمام أصدقائك.
+</div>
+
+<div class="referral">
+
+<input
+id="referralLink"
+readonly
+value="جارٍ إنشاء الرابط...">
+
+<button
+class="copy-btn"
+onclick="copyReferral()">
+نسخ
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div id="videosSection">
+
+<div class="section-title">
+🎬 الفيديوهات
+</div>
+
+<div class="task-list">
+
+<div class="task">
+<div class="task-icon">▶️</div>
+
+<div class="task-info">
+<div class="task-title">YouTube Video 1</div>
+<div class="task-reward">+0.050 NTF</div>
+</div>
+
+<button id="video1"
+class="task-btn"
+onclick="goTask('video1','https://www.youtube.com/')">
+GO
+</button>
+</div>
+
+<div class="task">
+<div class="task-icon">▶️</div>
+
+<div class="task-info">
+<div class="task-title">YouTube Video 2</div>
+<div class="task-reward">+0.050 NTF</div>
+</div>
+
+<button id="video2"
+class="task-btn"
+onclick="goTask('video2','https://www.youtube.com/')">
+GO
+</button>
+</div>
+
+<div class="task">
+<div class="task-icon">▶️</div>
+
+<div class="task-info">
+<div class="task-title">YouTube Video 3</div>
+<div class="task-reward">+0.050 NTF</div>
+</div>
+
+<button id="video3"
+class="task-btn"
+onclick="goTask('video3','https://www.youtube.com/')">
+GO
+</button>
+</div>
+
+</div>
+
+</div>
+
+
+<div id="adsSection">
+
+<div class="section-title">
+📢 المهام والمواقع
+</div>
+
+<div class="task-list">
+
+<div class="task">
+<div class="task-icon">🌐</div>
+
+<div class="task-info">
+<div class="task-title">Website 1</div>
+<div class="task-reward">+0.030 NTF</div>
+</div>
+
+<button id="ad1"
+class="task-btn"
+onclick="goTask('ad1','https://example.com')">
+GO
+</button>
+</div>
+
+<div class="task">
+<div class="task-icon">🌐</div>
+
+<div class="task-info">
+<div class="task-title">Website 2</div>
+<div class="task-reward">+0.030 NTF</div>
+</div>
+
+<button id="ad2"
+class="task-btn"
+onclick="goTask('ad2','https://example.com')">
+GO
+</button>
+</div>
+
+<div class="task">
+<div class="task-icon">🌐</div>
+
+<div class="task-info">
+<div class="task-title">Website 3</div>
+<div class="task-reward">+0.030 NTF</div>
+</div>
+
+<button id="ad3"
+class="task-btn"
+onclick="goTask('ad3','https://example.com')">
+GO
+</button>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="section-title">
+⚡ باقات النقاط
+</div>
+
+<div class="packages">
+
+<div class="package">
+<div class="package-left">
+
+<div class="package-icon">🟢</div>
+
+<div>
+<div class="package-name">Starter</div>
+<div class="package-rate">⛏️ 0.040 NTF / دقيقة</div>
+<div class="package-energy">⚡ 500 طاقة</div>
+</div>
+
+</div>
+
+<div class="package-right">
+
+<div class="price">$1</div>
+
+<button
+class="buy-btn"
+onclick="buyPackage(1,0.040,500)">
+شراء
+</button>
+
+</div>
+</div>
+
+
+<div class="package popular">
+
+<div class="package-left">
+
+<div class="package-icon">🔵</div>
+
+<div>
+<div class="package-name">Basic ⭐</div>
+<div class="package-rate">⛏️ 0.090 NTF / دقيقة</div>
+<div class="package-energy">⚡ 1500 طاقة</div>
+</div>
+
+</div>
+
+<div class="package-right">
+
+<div class="price">$4</div>
+
+<button
+class="buy-btn"
+onclick="buyPackage(4,0.090,1500)">
+شراء
+</button>
+
+</div>
+</div>
+
+
+<div class="package">
+
+<div class="package-left">
+
+<div class="package-icon">🟣</div>
+
+<div>
+<div class="package-name">Plus</div>
+<div class="package-rate">⛏️ 0.140 NTF / دقيقة</div>
+<div class="package-energy">⚡ 3000 طاقة</div>
+</div>
+
+</div>
+
+<div class="package-right">
+
+<div class="price">$8</div>
+
+<button
+class="buy-btn"
+onclick="buyPackage(8,0.140,3000)">
+شراء
+</button>
+
+</div>
+</div>
+
+
+<div class="package">
+
+<div class="package-left">
+
+<div class="package-icon">🟠</div>
+
+<div>
+<div class="package-name">Pro</div>
+<div class="package-rate">⛏️ 0.200 NTF / دقيقة</div>
+<div class="package-energy">⚡ 5000 طاقة</div>
+</div>
+
+</div>
+
+<div class="package-right">
+
+<div class="price">$12</div>
+
+<button
+class="buy-btn"
+onclick="buyPackage(12,0.200,5000)">
+شراء
+</button>
+
+</div>
+</div>
+
+
+<div class="package">
+
+<div class="package-left">
+
+<div class="package-icon">🔴</div>
+
+<div>
+<div class="package-name">Premium</div>
+<div class="package-rate">⛏️ 0.260 NTF / دقيقة</div>
+<div class="package-energy">⚡ 7500 طاقة</div>
+</div>
+
+</div>
+
+<div class="package-right">
+
+<div class="price">$16</div>
+
+<button
+class="buy-btn"
+onclick="buyPackage(16,0.260,7500)">
+شراء
+</button>
+
+</div>
+</div>
+
+
+<div class="package">
+
+<div class="package-left">
+
+<div class="package-icon">👑</div>
+
+<div>
+<div class="package-name">Ultimate</div>
+<div class="package-rate">⛏️ 0.330 NTF / دقيقة</div>
+<div class="package-energy">⚡ 10000 طاقة</div>
+</div>
+
+</div>
+
+<div class="package-right">
+
+<div class="price">$20</div>
+
+<button
+class="buy-btn"
+onclick="buyPackage(20,0.330,10000)">
+شراء
+</button>
+
+</div>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="bottom-nav">
+
+<button class="nav active"
+onclick="window.scrollTo({top:0,behavior:'smooth'})">
+<span class="nav-icon">🏠</span>
+الرئيسية
+</button>
+
+<button class="nav"
+onclick="window.scrollTo({top:300,behavior:'smooth'})">
+<span class="nav-icon">⛏️</span>
+الجمع
+</button>
+
+<button class="nav"
+onclick="showSection('videosSection')">
+<span class="nav-icon">🎬</span>
+الفيديوهات
+</button>
+
+<button class="nav"
+onclick="showSection('friendsSection')">
+<span class="nav-icon">👥</span>
+الأصدقاء
+</button>
+
+<button class="nav"
+onclick="document.querySelector('.packages').scrollIntoView({behavior:'smooth'})">
+<span class="nav-icon">💳</span>
+الباقات
+</button>
+
+</div>
+
+
+<div id="toast" class="toast"></div>
+
 
 <script>
+
 const tg = window.Telegram.WebApp;
+
 tg.ready();
+tg.expand();
+
+let balance = 0;
+let friends = 0;
+let level = 1;
+let energy = 100;
+let maxEnergy = 100;
+let miningRate = 0.0000012;
+let mining = false;
+
+let longPressTimer = null;
+let longPressTriggered = false;
+
+
+/* TELEGRAM USER */
+
+function loadTelegramUser(){
+
+if(
+tg.initDataUnsafe &&
+tg.initDataUnsafe.user
+){
+
+const user =
+tg.initDataUnsafe.user;
+
+const name =
+user.first_name ||
+user.username ||
+"مستخدم";
+
+document.getElementById(
+"userName"
+).textContent = name;
+
+const username =
+user.username ||
+user.id;
+
+/* غيّر اسم البوت هنا عند إنشاء البوت النهائي */
+
+const link =
+"https://t.me/NTF_BOT?start=ref_" +
+username;
+
+document.getElementById(
+"referralLink"
+).value = link;
+
+}
+
+}
+
+
+/* UI */
+
+function updateUI(){
+
+document.getElementById(
+"balance"
+).textContent =
+balance.toFixed(10);
+
+document.getElementById(
+"friends"
+).textContent =
+friends;
+
+document.getElementById(
+"level"
+).textContent =
+level;
+
+document.getElementById(
+"energy"
+).textContent =
+"⚡ الطاقة: " +
+Math.floor(energy);
+
+document.getElementById(
+"energyStat"
+).textContent =
+Math.floor(energy);
+
+document.getElementById(
+"rate"
+).textContent =
+"+" +
+miningRate.toFixed(10) +
+" NTF / ثانية";
+
+const percent =
+maxEnergy > 0
+?
+(energy / maxEnergy) * 100
+:
+0;
+
+document.getElementById(
+"energyFill"
+).style.width =
+Math.max(0,percent) + "%";
+
+
+const circle =
+document.getElementById(
+"miningCircle"
+);
+
+if(mining){
+
+circle.classList.add(
+"mining-active"
+);
+
+document.getElementById(
+"autoText"
+).textContent =
+"🟢 الجمع التلقائي يعمل";
+
+document.getElementById(
+"tapText"
+).textContent =
+"اضغط مطولًا للإيقاف";
+
+}else{
+
+circle.classList.remove(
+"mining-active"
+);
+
+document.getElementById(
+"autoText"
+).textContent =
+"🔴 الجمع متوقف";
+
+document.getElementById(
+"tapText"
+).textContent =
+"اضغط مطولًا للتشغيل";
+
+}
+
+}
+
+
+/* CLICK */
+
+async function normalClick(){
+
+if(mining){
+
+showToast(
+"⛏️ الجمع يعمل حاليًا"
+);
+
+return;
+}
+
+showToast(
+"+0.0000001 NTF"
+);
+
+balance += 0.0000001;
+
+if(energy > 0){
+energy--;
+}
+
+updateUI();
+
+}
+
+
+/* LONG PRESS */
+
+const circle =
+document.getElementById(
+"miningCircle"
+);
+
+circle.addEventListener(
+"pointerdown",
+function(e){
+
+e.preventDefault();
+
+longPressTriggered = false;
+
+clearTimeout(longPressTimer);
+
+longPressTimer =
+setTimeout(
+function(){
+
+longPressTriggered = true;
+
+toggleMining();
+
+},
+700
+);
+
+}
+);
+
+circle.addEventListener(
+"pointerup",
+function(e){
+
+e.preventDefault();
+
+clearTimeout(longPressTimer);
+
+if(!longPressTriggered){
+
+normalClick();
+
+}
+
+longPressTriggered = false;
+
+}
+);
+
+circle.addEventListener(
+"pointercancel",
+function(){
+
+clearTimeout(longPressTimer);
+
+longPressTriggered = false;
+
+}
+);
+
+
+/* MINING */
+
+function toggleMining(){
+
+mining = !mining;
+
+updateUI();
+
+if(mining){
+
+showToast(
+"⛏️ تم تشغيل الجمع"
+);
+
+}else{
+
+showToast(
+"⛏️ تم إيقاف الجمع"
+);
+
+}
+
+}
+
+
+/* REFERRAL */
+
+function copyReferral(){
+
+const input =
+document.getElementById(
+"referralLink"
+);
+
+if(navigator.clipboard){
+
+navigator.clipboard.writeText(
+input.value
+);
+
+showToast(
+"👥 تم نسخ رابط الدعوة"
+);
+
+}else{
+
+input.select();
+
+document.execCommand(
+"copy"
+);
+
+showToast(
+"👥 تم نسخ الرابط"
+);
+
+}
+
+}
+
+
+/* TASKS */
+
+function goTask(id,url){
+
+const button =
+document.getElementById(id);
+
+if(!button){
+return;
+}
+
+window.open(
+url,
+"_blank"
+);
+
+button.textContent =
+"CLAIM";
+
+button.classList.add(
+"claim"
+);
+
+button.onclick =
+function(){
+
+claimTask(id);
+
+};
+
+showToast(
+"🎯 عند العودة اضغط CLAIM"
+);
+
+}
+
+
+function claimTask(id){
+
+const button =
+document.getElementById(id);
+
+if(
+!button ||
+!button.classList.contains("claim")
+){
+return;
+}
+
+let reward = 0;
+
+if(id.startsWith("video")){
+reward = 0.050;
+}else{
+reward = 0.030;
+}
+
+balance += reward;
+
+button.textContent =
+"تم ✓";
+
+button.disabled = true;
+
+button.classList.remove(
+"claim"
+);
+
+updateUI();
+
+showToast(
+"+" +
+reward.toFixed(3) +
+" NTF 🎉"
+);
+
+}
+
+
+/* DAILY */
+
+function dailyTask(){
+
+showToast(
+"🎁 المهمة اليومية ستضاف قريبًا"
+);
+
+}
+
+
+/* PACKAGES */
+
+function buyPackage(
+price,
+rate,
+packageEnergy
+){
+
+showToast(
+"💳 الدفع الآمن سيضاف لاحقًا"
+);
+
+}
+
+
+/* SECTIONS */
+
+function showSection(id){
+
+const element =
+document.getElementById(id);
+
+if(element){
+
+element.scrollIntoView({
+behavior:"smooth",
+block:"start"
+});
+
+}
+
+}
+
+
+/* TOAST */
+
+function showToast(message){
+
+const toast =
+document.getElementById(
+"toast"
+);
+
+toast.textContent =
+message;
+
+toast.style.display =
+"block";
+
+setTimeout(
+function(){
+
+toast.style.display =
+"none";
+
+},
+2000
+);
+
+}
+
+
+/* START */
+
+loadTelegramUser();
+updateUI();
+
 </script>
 
 </body>
