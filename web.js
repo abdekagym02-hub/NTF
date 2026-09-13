@@ -111,7 +111,6 @@ app.get("/api/mining/status", async (req, res) => {
     if (elapsed >= sixHours) {
         user.miningStart = null;
     } else {
-        user.miningStart = now;
     }
 
     await db.write();
