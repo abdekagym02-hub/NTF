@@ -129,6 +129,20 @@ if (token) {
     console.log("🤖 NTF Bot يعمل بنجاح");
 
     bot.onText(/\/start/, async (msg) => {
+await db.read();
+
+const id = msg.from.id;
+
+if (!db.data.users[id]) {
+    db.data.users[id] = {
+        balance: 0,
+        friends: 0,
+        level: 1,
+        energy: 1000,
+        miningStart: Date.now()
+    };
+    await db.write();
+}
 
         await bot.sendMessage(
             msg.chat.id,
