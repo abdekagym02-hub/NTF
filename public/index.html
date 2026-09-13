@@ -1366,68 +1366,56 @@ longPressTriggered = false;
 
 
 /* MINING */
+async function toggleMining(){
 
+    const tgUser = tg.initDataUnsafe?.user;
 
-function toggleMining(){
-
-    mining = !mining;
-
-    updateUI();
+    if(!tgUser){
+        showToast("⚠️ افتح NTF من Telegram");
+        return;
+    }
 
     if(mining){
+        mining = false;
+        updateUI();
+        showToast("⛏️ تم إيقاف الجمع");
+        return;
+    }
 
-        showToast("⛏️ تم تشغيل الجمع");
+    try {
 
-        if(!window.miningInterval){
+        const response = await fetch("/api/mining/start", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: tgUser.id
+            })
+        });
 
-            window.miningInterval = setInterval(async () => {
+        const user = await response.json();
 
-                const tgUser =
-                    window.Telegram?.WebApp?.initDataUnsafe?.user;
-
-                if(!tgUser || energy <= 0){
-                    return;
-                }
-
-                try {
-
-                    const response = await fetch(
-                        "/api/mining/click",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                id: tgUser.id
-                            })
-                        }
-                    );
-
-                    if(!response.ok) return;
-
-                    const user = await response.json();
-
-                    balance = user.balance;
-                    energy = user.energy;
-
-                    updateUI();
-
-                } catch(error) {
-                    console.error(error);
-                }
-
-            }, 1000);
+        if(!response.ok){
+            showToast("❌ حدث خطأ");
+            return;
         }
 
-    }else{
+        balance = user.balance;
+        mining = true;
 
-        showToast("⛏️ تم إيقاف الجمع");
+        updateUI();
 
-        clearInterval(window.miningInterval);
-        window.miningInterval = null;
+        showToast("⛏️ بدأ التعدين لمدة 6 ساعات");
+
+    } catch(error) {
+
+        console.error(error);
+        showToast("❌ خطأ في الاتصال");
+
     }
 }
+
 /* REFERRAL */
 
 function copyReferral(){
@@ -1622,6 +1610,37 @@ loadTelegramUser();
 updateUI();
 
 loadUser();
+
+
+async function checkMiningStatus(){
+
+    const tgUser = tg.initDataUnsafe?.user;
+
+    if(!tgUser) return;
+
+    try {
+
+        const response = await fetch(
+            `/api/mining/status?id=${tgUser.id}`
+        );
+
+        if(!response.ok) return;
+
+        const user = await response.json();
+
+        balance = user.balance;
+        mining = !!user.miningStart;
+
+        updateUI();
+
+    } catch(error) {
+
+        console.error(error);
+
+    }
+}
+
+checkMiningStatus();
 </script>
 
 </body>

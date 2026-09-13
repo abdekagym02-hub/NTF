@@ -44,7 +44,10 @@ app.get("/api/user", async (req, res) => {
 
 // ================= MINING CLICK =================
 
-app.post("/api/mining/click", async (req, res) => {
+
+// ================= MINING =================
+
+app.post("/api/mining/start", async (req, res) => {
     await db.read();
 
     const id = req.body.id;
@@ -60,20 +63,56 @@ app.post("/api/mining/click", async (req, res) => {
             balance: 0,
             friends: 0,
             level: 1,
-            energy: 1000
+            energy: 1000,
+            miningStart: null
         };
     }
 
     const user = db.data.users[id];
 
-    if (user.energy <= 0) {
+    if (!user.miningStart) {
+        user.miningStart = Date.now();
+        await db.write();
+    }
+
+    res.json(user);
+});
+
+app.get("/api/mining/status", async (req, res) => {
+    await db.read();
+
+    const id = req.query.id;
+
+    if (!id || !db.data.users[id]) {
         return res.status(400).json({
-            error: "No energy"
+            error: "User not found"
         });
     }
 
-    user.balance += 0.0000001 ;
-    user.energy -= 0.0000001;
+    const user = db.data.users[id];
+
+    if (!user.miningStart) {
+        return res.json(user);
+    }
+
+    const now = Date.now();
+    const sixHours = 6 * 60 * 60 * 1000;
+
+    const elapsed = Math.min(
+        now - user.miningStart,
+        sixHours
+    );
+
+    const rate = 0.0000012;
+    const earned = (elapsed / 1000) * rate;
+
+    user.balance += earned;
+
+    if (elapsed >= sixHours) {
+        user.miningStart = null;
+    } else {
+        user.miningStart = now;
+    }
 
     await db.write();
 
