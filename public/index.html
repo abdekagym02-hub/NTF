@@ -1367,29 +1367,67 @@ longPressTriggered = false;
 
 /* MINING */
 
+
 function toggleMining(){
 
-mining = !mining;
+    mining = !mining;
 
-updateUI();
+    updateUI();
 
-if(mining){
+    if(mining){
 
-showToast(
-"⛏️ تم تشغيل الجمع"
-);
+        showToast("⛏️ تم تشغيل الجمع");
 
-}else{
+        if(!window.miningInterval){
 
-showToast(
-"⛏️ تم إيقاف الجمع"
-);
+            window.miningInterval = setInterval(async () => {
 
+                const tgUser =
+                    window.Telegram?.WebApp?.initDataUnsafe?.user;
+
+                if(!tgUser || energy <= 0){
+                    return;
+                }
+
+                try {
+
+                    const response = await fetch(
+                        "/api/mining/click",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                id: tgUser.id
+                            })
+                        }
+                    );
+
+                    if(!response.ok) return;
+
+                    const user = await response.json();
+
+                    balance = user.balance;
+                    energy = user.energy;
+
+                    updateUI();
+
+                } catch(error) {
+                    console.error(error);
+                }
+
+            }, 1000);
+        }
+
+    }else{
+
+        showToast("⛏️ تم إيقاف الجمع");
+
+        clearInterval(window.miningInterval);
+        window.miningInterval = null;
+    }
 }
-
-}
-
-
 /* REFERRAL */
 
 function copyReferral(){
